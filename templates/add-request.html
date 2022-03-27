@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 style="text-align: center; margin-top: 30px; margin-bottom: 30px;">{% block title %} Введите габариты груза {% endblock %}</h1>
+
+<form method="post" style="margin: 0 auto; width: 350px;">
+
+    {% if error %}
+    <div class="list-tag tag-red" style="margin-bottom: 30px;" role="alert">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <div style="margin-bottom: 10px;">
+        <label class="add-label" for="length">Длина, м</label>
+        <input class="input" type="number" step="0.01" name="length" required
+	       min="0"
+               ></input>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        <label class="add-label" for="width">Ширина, м</label>
+		<input class="input" type="number" step="0.01" name="width" required
+	       min="0"
+               ></input>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+		<label class="add-label" for="height">Высота, м</label>
+		<input class="input" type="number" step="0.01" name="height" required
+	       min="0"
+               ></input>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+		<label class="add-label" for="weight">Масса, т</label>
+		<input class="input" type="number" step="0.01" name="weight" required
+	       min="0"
+               ></input>
+    </div>
+    	<a href="{{ url_for('home') }}" class="button tag-red">Назад</a>
+        <button type="submit" class="button tag-green">Отправить</button>
+    </div>
+</form>
+{% endblock %}

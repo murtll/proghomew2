@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block sidebar %}
+<div class="filters">
+	<h3>Фильтры</h3>
+	<form method="get">
+		<div>
+			<span>Свободен: </span> 
+			<input name="busy" value="false" id="not-busy" type="radio" {% if busy == 'false' %} checked {% endif %}> <label for="not-busy">Да</label> 
+			<input name="busy" value="true" id="busy" type="radio" {% if busy == 'true' %} checked {% endif %}> <label for="busy">Нет</label>
+		</div>
+
+		<div style="display: flex; align-items: center; margin-bottom: 30px;">
+			<span>Минимальная грузоподъемность: </span> <input class="input" style="width: 150px; margin: 0 5px;" name="min_capacity" min="0" type="number" {% if min_capacity %} value="{{ min_capacity }}" {% endif %}> т
+		</div>
+
+		<button type="submit" class="button tag-violet">Подобрать</button>
+		<a class='button tag-red' href="{{ url_for('home') }}">Сбросить</a>
+	</form>
+</div>
+
+<div class="actions">
+	<a href="{{ url_for('select_type') }}" class="button tag-violet">Добавить транспорт</a>
+	<a href="{{ url_for('add_request') }}" class="button tag-green">Внести заявку</a>
+</div>
+{% endblock %}
+
+{% block content %}
+		<h1 class="header">{% block title %}Учет транспорта{% endblock %}</h1>
+		<div class="main-list">
+		{% if rec_id == -1 %}
+			<span class="list-tag tag-red">
+				Подходящий транспорт для перевозки вашего груза не был найден
+			</span>
+		{% endif %}
+		{% for car in transport %}
+				<h2 {% if rec_id == car.id %} style="color: lightgreen;" {% endif %}>{{ car.name }}
+
+				{% if rec_id == car.id %}
+				<span class="list-tag tag-green" style="font-size: 15px;">
+					Рекомендуется для перевозки вашего груза
+				</span>
+				{% endif %}
+				</h2>
+				<span class="list-tag tag-cyan">Тип: {{ car.type.name }}</span>
+				<span class="list-tag tag-blue">Грузоподъемность: {{ car.type.capacity }} т</span>
+				<span class="list-tag tag-blue">Длина: {{ car.length }} м</span>
+				<span class="list-tag tag-blue">Ширина: {{ car.width }} м</span>
+				<span class="list-tag tag-blue">Высота: {{ car.height }} м</span>
+				{% if car.isBusy %}
+						<span class="list-tag tag-red">Занят</span>
+				{% endif %}
+					{% if not car.isBusy %}
+						<a class="button tag-green" style="margin-right: 10px; margin-left: 60px;" href="{{ url_for('reserve_car', id=car.id) }}">Забронировать</a>
+						<a class='button tag-red' href="{{ url_for('delete_car', id=car.id) }}" onclick="if (!(confirm('Удалить {{ car.name }}?'))) return false" >Удалить</a>
+					{% else %}
+						<a style="margin-left: 100px;" class='button tag-violet' href="{{ url_for('unreserve_car', id=car.id) }}">Освободить</a>
+					{% endif %}
+				<hr style="margin-top: 30px;">
+		{% endfor %}
+		</div>
+{% endblock %}
+

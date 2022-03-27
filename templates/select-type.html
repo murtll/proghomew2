@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 style="text-align: center; margin-top: 30px; margin-bottom: 30px;">{% block title %} Выберите тип транспорта {% endblock %}</h1>
+
+<form method="post" style="margin: 0 auto; width: 1100px;">
+
+	<a href="{{ url_for('home') }}" class="button tag-red">Назад</a>
+
+        <select name="type_id" required
+		class="select"
+               value="{{ request.form['type_id'] }}">
+                {% for type in types %}
+                    <option selected value="{{type.id}}">{{ type.name }} - 
+                        грузоподъемность: {{ type.capacity }}т, 
+                        длина: {{ type.minLength }}-{{ type.maxLength }}м,
+                        ширина: {{ type.minWidth }}-{{ type.maxWidth }}м,
+                        высота: {{ type.minHeight }}-{{ type.maxHeight }}м
+                    </option>
+                {% endfor %}
+            </select>
+
+        <button type="submit" class="button tag-violet">Далее</button>
+</form>
+{% endblock %}

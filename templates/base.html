@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <style>
+	body {
+		background-color: black; 
+		font: 1rem Inconsolata, courier;
+		color: white;
+	}
+	
+	.header {
+		text-align: center; 
+		width: 400px;
+		margin: 30px auto;
+		padding: 10px;
+	}
+
+	.main-list {
+		margin-top: 40px;
+		margin-left: 600px;
+		margin-right: 30px;
+		border: 1px solid white;
+		padding: 30px;
+	}
+
+	.sidebar {
+		margin: 100px 30px;
+		position: fixed;
+	}
+
+	.filters {
+		padding: 20px;
+		border: 1px solid white;
+	}
+
+	.actions {
+		padding: 37px;
+		border: 1px solid white;
+	}
+
+	.button {
+		background: none;
+		cursor: pointer;
+		font: 1rem Inconsolata, courier;
+		text-decoration: none;
+		padding: 5px 10px;
+		border: 1px solid;
+	}
+
+	.tag-violet {
+		border-color: blueviolet;
+		color: blueviolet;
+	}
+
+	.tag-green {
+		border-color: lightgreen;
+		color: lightgreen;
+	}
+
+	.list-tag {
+		padding: 3px 10px;
+		border: 1px dashed;
+		margin-top: 10px;
+	}
+
+	.tag-blue {
+		border-color: lightblue;
+		color: lightblue;
+	}
+
+	.tag-cyan {
+		border-color: cyan;
+		color: cyan;
+	}
+
+	.tag-red {
+		border-color: red;
+		color: red;
+	}
+
+	.input, .select {
+		background: none;
+		color: white;
+		font: 1rem Inconsolata, courier;
+		text-decoration: none;
+		padding: 5px 10px;
+		border: 1px solid white;
+	}
+
+	.input:read-only {
+		background: none;
+		color: grey;
+		font: 1rem Inconsolata, courier;
+		text-decoration: none;
+		padding: 5px 10px;
+		border: 1px solid grey;
+	}
+
+	.add-label {
+		display: inline-block;
+		width: 100px;
+	}
+
+    </style>
+
+    <title>{% block title %} {% endblock %}</title>
+  </head>
+  <body>
+
+    <div class="sidebar">
+    	{% block sidebar %} {% endblock %}
+    </div>
+    <div class="container">
+        {% block content %} {% endblock %}
+    </div>
+
+  </body>
+</html>
+
