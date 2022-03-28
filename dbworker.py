@@ -12,36 +12,7 @@ class Type:
         self.minHeight = minHeight
         self.maxHeight = maxHeight
 
-class Transport:
-    def __init__(self, id, name, _type, length, width, height, isBusy = False):
-        self.id = id
-        self.name = name
-        self.type = _type
-        self.length = length
-        self.width = width
-        self.height = height
-        self.isBusy = isBusy
-
-class DbWorker:
-    def __init__(self):
-        connection = sqlite3.connect('database.db')
-        with open('schema.sql') as schema:
-            connection.executescript(schema.read())
-        connection.commit()
-        connection.close()
-
-    def map_to_transport(self, t):
-        return Transport(
-            t['transport_id'], 
-            t['transport_name'], 
-            self.map_to_type(t),
-            t['transport_length'], 
-            t['transport_width'], 
-            t['transport_height'], 
-            bool(t['transport_is_busy'])
-        )
-
-    def map_to_type(self, t):
+    def from_dict(t):
         return Type(
                 t['types_id'],
                 t['types_name'],
@@ -53,6 +24,36 @@ class DbWorker:
                 t['types_min_height'],
                 t['types_max_height']
             )
+
+class Transport:
+    def __init__(self, id, name, _type, length, width, height, isBusy = False):
+        self.id = id
+        self.name = name
+        self.type = _type
+        self.length = length
+        self.width = width
+        self.height = height
+        self.isBusy = isBusy
+
+    def from_dict(t):
+        return Transport(
+            t['transport_id'], 
+            t['transport_name'], 
+            Type.from_dict(t),
+            t['transport_length'], 
+            t['transport_width'], 
+            t['transport_height'], 
+            bool(t['transport_is_busy'])
+        )
+
+
+class DbWorker:
+    def __init__(self):
+        connection = sqlite3.connect('database.db')
+        with open('schema.sql') as schema:
+            connection.executescript(schema.read())
+        connection.commit()
+        connection.close()
 
     def get_all_transport(self):
         connection = sqlite3.connect('database.db')
@@ -79,7 +80,7 @@ class DbWorker:
                                             ON transport.type_id = types.id''').fetchall()
         connection.close()
 
-        return list(map(self.map_to_transport, transport))
+        return list(map(Transport.from_dict, transport))
 
     def get_all_transport_by_capacity(self, min_capacity):
         connection = sqlite3.connect('database.db')
@@ -106,7 +107,7 @@ class DbWorker:
                                             ON transport.type_id = types.id WHERE types.capacity>=?''', (min_capacity)).fetchall()
         connection.close()
 
-        return list(map(self.map_to_transport, transport))
+        return list(map(Transport.from_dict, transport))
 
     def get_all_transport_by_busy_and_capacity(self, busy, min_capacity):
         connection = sqlite3.connect('database.db')
@@ -133,7 +134,7 @@ class DbWorker:
                                             ON transport.type_id = types.id WHERE transport.is_busy=? and types.capacity>=?''', (busy, min_capacity)).fetchall()
         connection.close()
 
-        return list(map(self.map_to_transport, transport))
+        return list(map(Transport.from_dict, transport))
 
     def add_car(self, type_id, name, length, width, height):
         connection = sqlite3.connect('database.db')
@@ -162,7 +163,7 @@ class DbWorker:
                                     FROM types''').fetchall()
         connection.close()
 
-        return list(map(self.map_to_type, types))
+        return list(map(Type.from_dict, types))
 
     def get_type_by_id(self, id):
         connection = sqlite3.connect('database.db')
@@ -181,23 +182,23 @@ class DbWorker:
                                     FROM types WHERE id = ?''', (id)).fetchone()
         connection.close()
 
-        return self.map_to_type(_type)
+        return Type.from_dict(_type)
     
     def delete_car_by_id(self, id):
         connection = sqlite3.connect('database.db')
-        connection.execute('''DELETE FROM transport WHERE id=?''', (id))
+        connection.execute('''DELETE FROM transport WHERE id=? AND is_busy=0''', (id))
         connection.commit()
         connection.close()
 
     def reserve_car_by_id(self, id):
         connection = sqlite3.connect('database.db')
-        connection.execute('''UPDATE transport SET is_busy=1 WHERE id=?''', (id))
+        connection.execute('''UPDATE transport SET is_busy=1 WHERE id=? AND is_busy=0''', (id))
         connection.commit()
         connection.close()
 
     def unreserve_car_by_id(self, id):
         connection = sqlite3.connect('database.db')
-        connection.execute('''UPDATE transport SET is_busy=0 WHERE id=?''', (id))
+        connection.execute('''UPDATE transport SET is_busy=0 WHERE id=? AND is_busy=1''', (id))
         connection.commit()
         connection.close()
 
